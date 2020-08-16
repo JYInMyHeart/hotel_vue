@@ -24,6 +24,16 @@ export default new Vuex.Store({
       state.logo = data.userLogo
       state.userId = data.userId
     },
+    updateInfo (state, data) {
+      window.sessionStorage.setItem('username', data.name)
+      window.sessionStorage.setItem('userRole', data.role)
+      window.sessionStorage.setItem('logo', data.icon)
+      window.sessionStorage.setItem('userId', data.identity_id)
+      state.logo = data.icon
+      state.username = data.name
+      state.userRole = data.role
+      state.userId = data.identity_id
+    },
     logout (state) {
       // 注意不能用 null 清除，否则将无法判断 user 里具体的内容
       state.username = ''

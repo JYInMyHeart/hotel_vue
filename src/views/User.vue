@@ -193,6 +193,18 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
+                      <el-col :span="12" >
+                        <el-form-item label="是否激活">
+                          <el-select v-model="formData.active" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                     </el-row>
                   </el-form>
                 </el-tab-pane>
@@ -232,6 +244,16 @@ export default {
       edit: {},
       dataList: [], // 列表数据
       fileList: [],
+      deletedList: [
+        {
+          label: '已激活',
+          value: 1
+        },
+        {
+          label: '未激活',
+          value: 2
+        }
+      ],
       genderList: [
         {
           label: '女',
@@ -319,9 +341,10 @@ export default {
       }).catch(error => {
         console.log(error)
         this.$message.error('删除失败')
+      }).finally(() => {
+        this.findPage()
+        this.delVisible = false// 关闭删除提示模态框
       })
-      this.delVisible = false// 关闭删除提示模态框
-      this.findPage()
     },
 
     handleAvatarSuccess (res, file) {

@@ -177,42 +177,44 @@ export default {
       return isJPGOrPNG && isLt2M
     },
     updateMyInfo () {
+      const that = this
       // 发送请求，根据ID获取用户数据
-      this.$axios.get('/user/selectUserByIdentityID?identity_id=' + this.userId,
+      that.$axios.get('/user/selectUserByIdentityID?identity_id=' + that.userId,
         {
           headers: {
             // 'content-type': 'application/json',
-            token: this.token
+            token: that.token
           }
         }
       ).then((response) => {
         if (response.data.code === 200) {
           // 弹出编辑窗口
-          this.dialogFormVisible4Edit = true
+          that.dialogFormVisible4Edit = true
           // 选中第一个Tab标签
-          this.activeName = 'first'
+          that.activeName = 'first'
           // 把数据赋值给formData
-          this.formData = response.data.data.records[0]
-          this.imageUrl = this.logo
+          that.formData = response.data.data.records[0]
+          that.imageUrl = that.logo
         } else {
-          this.$message.error(response.data.message)
+          that.$message.error(response.data.message)
         }
       })
     },
     handleEdit () {
+      const that = this
       // 发送请求，提交表单数据
-      this.formData.icon = this.imageUrl === null || this.imageUrl === '' ? this.formData.icon : this.imageUrl
-      this.formData.update_time = new Date().Format('yyyy-MM-dd hh:mm:ss')
-      this.$axios.post('/user/update', this.formData,
+      that.formData.icon = this.imageUrl === null || that.imageUrl === '' ? that.formData.icon : that.imageUrl
+      that.formData.update_time = new Date().Format('yyyy-MM-dd hh:mm:ss')
+      that.$axios.post('/user/update', that.formData,
         { headers: { token: this.token } }
       ).then((response) => {
         if (response.data.code === 200) {
-          this.$message.success('更新完成')
-          this.dialogFormVisible4Edit = false
-          this.findPage()
+          that.$message.success('更新完成')
+          that.dialogFormVisible4Edit = false
+          that.$store.commit('updateInfo', that.formData)
         } else {
           // 返回失败，提示编辑失败
-          this.$message.error(response.data.message)
+          that.$message.error(response.data.message)
         }
       })
     }

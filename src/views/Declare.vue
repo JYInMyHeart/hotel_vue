@@ -10,11 +10,12 @@
     <div class="app-container">
       <div class="box">
         <div class="filter-container">
-          <el-input placeholder="宣传标题" v-model="keyword" style="width: 10%;"
+          <el-input placeholder="宣传标题" v-model="pagination.keyword" style="width: 10%;"
                     class="filter-item"></el-input>
+          <el-button @click="findPageByCondition()" class="dalfBut">查询</el-button>
           <el-button type="primary" class="butT" @click="handleCreate()" v-if="operationVisible">新建</el-button>
         </div>
-        <el-table size="small" current-row-key="id" :data="dataList.filter(d => d.title.includes(this.keyword) || d.content.includes(this.keyword))" stripe highlight-current-row>
+        <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
           <el-table-column type="index" align="center" label="序号"></el-table-column>
           <el-table-column prop="title" label="标题" align="center"></el-table-column>
           <el-table-column prop="content" label="内容" align="center">
@@ -38,6 +39,16 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="pagination-container">
+          <el-pagination
+            class="pagiantion"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.currentPage"
+            :page-size="pagination.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="pagination.total">
+          </el-pagination>
+        </div>
         <!-- 新增标签弹层 -->
         <div class="add-form">
           <el-dialog title="新增宣传" :visible.sync="dialogFormVisible">
@@ -49,6 +60,20 @@
                       <el-col :span="12">
                         <el-form-item label="标题">
                           <el-input v-model="formData.title"/>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -86,6 +111,20 @@
                     </el-row>
                     <el-row>
                       <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
                         <el-form-item label="内容">
                           <el-input v-model="formData.content" type="textarea"></el-input>
                         </el-form-item>
@@ -114,7 +153,6 @@ export default {
   data () {
     return {
       activeName: 'first', // 添加/编辑窗口Tab标签名称
-      keyword: '',
       edit: {},
 
       dataList: [], // 列表数据
@@ -122,7 +160,23 @@ export default {
       tableData: [], // 新增和编辑表单中对应的销售商列表数据
       roleIds: [], // 新增和编辑表单中销售商对应的复选框，基于双向绑定可以进行回显和数据提交
       dialogFormVisible: false, // 控制添加窗口显示/隐藏
-      dialogFormVisible4Edit: false
+      dialogFormVisible4Edit: false,
+      deletedList: [
+        {
+          label: '已删除',
+          value: 1
+        },
+        {
+          label: '未删除',
+          value: 2
+        }
+      ],
+      pagination: { // 分页相关属性
+        currentPage: 1,
+        pageSize: 10,
+        total: 100,
+        keyword: ''
+      }
     }
   },
   computed: {
@@ -136,7 +190,23 @@ export default {
     this.findPage()
   },
   methods: {
-
+    handleCurrentChange (currentPage) {
+      // currentPage为切换后的页码
+      this.pagination.currentPage = currentPage
+      // 再次查询
+      this.findPage()
+    },
+    findPageByCondition () {
+      // 若有查询条件, 把当前页码设置为第一页
+      if (this.pagination.keyword !== '' && this.pagination.keyword.length > 0) {
+        this.pagination.currentPage = 1
+      }
+      // 调用分页查询
+      this.findPage()
+    },
+    refresh () {
+      this.$forceUpdate()
+    },
     dateFormat: function (row, column) {
       const date = row[column.property]
       if (date === undefined || date === null) {
@@ -192,18 +262,24 @@ export default {
     // 分页查询
     findPage () {
       // 封装分页查询参数
-
+      const params = {
+        page: this.pagination.currentPage,
+        size: this.pagination.pageSize,
+        keyword: this.pagination.keyword
+      }
       // 发送请求，获取分页数据
-      this.$axios.get('/declare/list',
+      this.$axios.get('/declare/listByKeyword',
         {
           headers: {
             'content-type': 'application/json',
             token: this.token
-          }
+          },
+          params: params
         }
       ).then((response) => {
         // 把分页数据和总记录数据赋值给模型
-        this.dataList = response.data.data.records
+        this.pagination.total = response.data.data.records.totalCount
+        this.dataList = response.data.data.records.lists
       })
     },
     // 重置表单

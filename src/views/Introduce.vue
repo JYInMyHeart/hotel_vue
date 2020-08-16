@@ -59,6 +59,20 @@
                         </el-form-item>
                       </el-col>
                     </el-row>
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
                   </el-form>
                 </el-tab-pane>
               </el-tabs>
@@ -81,6 +95,20 @@
                       <el-col :span="12">
                         <el-form-item label="标题">
                           <el-input v-model="formData.title"/>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -116,7 +144,16 @@ export default {
       activeName: 'first', // 添加/编辑窗口Tab标签名称
       keyword: '',
       edit: {},
-
+      deletedList: [
+        {
+          label: '已删除',
+          value: 1
+        },
+        {
+          label: '未删除',
+          value: 2
+        }
+      ],
       dataList: [], // 列表数据
       formData: {}, // 表单数据
       tableData: [], // 新增和编辑表单中对应的销售商列表数据
@@ -136,7 +173,9 @@ export default {
     this.findPage()
   },
   methods: {
-
+    refresh () {
+      this.$forceUpdate()
+    },
     dateFormat: function (row, column) {
       const date = row[column.property]
       if (date === undefined || date === null) {

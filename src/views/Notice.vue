@@ -54,6 +54,20 @@
                     </el-row>
                     <el-row>
                       <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
                         <el-form-item label="内容">
                           <el-input v-model="formData.content" type="textarea"></el-input>
                         </el-form-item>
@@ -81,6 +95,20 @@
                       <el-col :span="12">
                         <el-form-item label="标题">
                           <el-input v-model="formData.title"/>
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item label="是否删除">
+                          <el-select v-model="formData.deleted" placeholder="请选择" @change="refresh()">
+                            <el-option
+                              v-for="item in deletedList"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -122,7 +150,17 @@ export default {
       tableData: [], // 新增和编辑表单中对应的销售商列表数据
       roleIds: [], // 新增和编辑表单中销售商对应的复选框，基于双向绑定可以进行回显和数据提交
       dialogFormVisible: false, // 控制添加窗口显示/隐藏
-      dialogFormVisible4Edit: false
+      dialogFormVisible4Edit: false,
+      deletedList: [
+        {
+          label: '已删除',
+          value: 1
+        },
+        {
+          label: '未删除',
+          value: 2
+        }
+      ]
     }
   },
   computed: {
@@ -136,6 +174,9 @@ export default {
     this.findPage()
   },
   methods: {
+    refresh () {
+      this.$forceUpdate()
+    },
 
     dateFormat: function (row, column) {
       const date = row[column.property]
