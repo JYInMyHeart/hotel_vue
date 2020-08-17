@@ -1,7 +1,9 @@
 <template>
   <div>
-    <keep-alive v-if="isRouterAlive">
-      <component v-bind:is="off"></component>
+    <keep-alive v-if="isRouterAlive" >
+      <transition name="el-zoom-in-center">
+      <component   v-bind:is="off"></component>
+      </transition>
     </keep-alive>
 <!--    <NavMenu></NavMenu>-->
     <router-view/>
