@@ -13,6 +13,7 @@
           <el-input placeholder="简介标题" v-model="keyword" style="width: 10%;"
                     class="filter-item"></el-input>
           <el-button type="primary" class="butT" @click="handleCreate()" v-if="operationVisible">新建</el-button>
+          <el-button type="success" class="butT" @click="refreshComponent()" v-if="operationVisible">刷新</el-button>
         </div>
         <el-table size="small" current-row-key="id" :data="dataList.filter(d => d.title.includes(this.keyword) || d.content.includes(this.keyword))" stripe highlight-current-row>
           <el-table-column type="index" align="center" label="序号"></el-table-column>
@@ -139,6 +140,7 @@ import { mapState } from 'vuex'
 import '@/dateFormat'
 export default {
   name: 'Introduce',
+  inject: ['myReload'],
   data () {
     return {
       activeName: 'first', // 添加/编辑窗口Tab标签名称
@@ -173,6 +175,9 @@ export default {
     this.findPage()
   },
   methods: {
+    refreshComponent () {
+      this.myReload()
+    },
     refresh () {
       this.$forceUpdate()
     },

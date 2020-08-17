@@ -1,6 +1,9 @@
 <template>
   <div>
-    <NavMenu></NavMenu>
+    <keep-alive v-if="isRouterAlive">
+      <component v-bind:is="off"></component>
+    </keep-alive>
+<!--    <NavMenu></NavMenu>-->
     <router-view/>
     <Header></Header>
   </div>
@@ -8,9 +11,30 @@
 
 <script>
 import NavMenu from '@/views/NavMenu'
+
 export default {
   name: 'Main',
-  components: { NavMenu }
+  components: { NavMenu },
+  data () {
+    return {
+      off: 'NavMenu',
+      isRouterAlive: true
+    }
+  },
+  provide () {
+    return {
+      myReload: this.myReload
+    }
+  },
+  methods: {
+    myReload: function () {
+      console.log('myReload')
+      this.isRouterAlive = false
+      this.$nextTick(function () {
+        this.isRouterAlive = true
+      })
+    }
+  }
 }
 </script>
 

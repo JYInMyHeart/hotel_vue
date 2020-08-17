@@ -55,20 +55,20 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="权限">
-                      <el-select v-model="formData.role" placeholder="请选择" @change="refresh()">
-                        <el-option
-                          v-for="item in userRoleList"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
+<!--                <el-row>-->
+<!--                  <el-col :span="12">-->
+<!--                    <el-form-item label="权限">-->
+<!--                      <el-select v-model="formData.role" placeholder="请选择" @change="refresh()">-->
+<!--                        <el-option-->
+<!--                          v-for="item in userRoleList"-->
+<!--                          :key="item.value"-->
+<!--                          :label="item.label"-->
+<!--                          :value="item.value">-->
+<!--                        </el-option>-->
+<!--                      </el-select>-->
+<!--                    </el-form-item>-->
+<!--                  </el-col>-->
+<!--                </el-row>-->
               </el-form>
             </el-tab-pane>
           </el-tabs>
@@ -114,8 +114,7 @@ export default {
       dialogVisible: false,
       dialogFormVisible4Edit: false,
       imageUrl: '',
-      activeName: 'first'// 添加/编辑窗口Tab标签名称
-
+      activeName: 'first' // 添加/编辑窗口Tab标签名称
     }
   },
   methods: {
